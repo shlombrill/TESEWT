@@ -70,7 +70,11 @@
         <option value="suit">Suit</option>
       </select>
     </label>
-    <button id="applyBtn">Apply</button>
+    <label>
+      Search rank:
+      <input type="text" id="searchInput" placeholder="e.g. A or 10" />
+    </label>
+    <button id="shuffleBtn">Shuffle</button>
   </div>
   <div class="cards" id="cardContainer"></div>
 
@@ -100,9 +104,13 @@
     function applyFilters() {
       const suit = document.getElementById("suitFilter").value;
       const sort = document.getElementById("sortOption").value;
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
       let list = cards.slice();
       if (suit !== "all") {
         list = list.filter(c => c.suit === suit);
+      }
+      if (query) {
+        list = list.filter(c => c.rank.toLowerCase().includes(query));
       }
       if (sort === "rank") {
         list.sort((a, b) => a.order - b.order);
@@ -112,7 +120,18 @@
       render(list);
     }
 
-    document.getElementById("applyBtn").addEventListener("click", applyFilters);
+    function shuffle() {
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      applyFilters();
+    }
+
+    document.getElementById("suitFilter").addEventListener("change", applyFilters);
+    document.getElementById("sortOption").addEventListener("change", applyFilters);
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
+    document.getElementById("shuffleBtn").addEventListener("click", shuffle);
     window.addEventListener("DOMContentLoaded", applyFilters);
   </script>
 </body>

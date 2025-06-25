@@ -4,6 +4,11 @@ This repository contains a small demo website for cataloging playing cards. The 
 
 ## Usage
 
-Open `index.html` in a web browser. Use the controls at the top to filter by suit and sort either by rank or suit.
+Open `index.html` in a web browser. The list of cards updates automatically as you interact with the controls:
+
+- **Filter by suit** using the drop‑down menu.
+- **Sort** cards either by rank or suit.
+- **Search** for a rank by typing in the search field.
+- **Shuffle** the deck with the provided button.
 
 No additional dependencies are required as everything is implemented in plain HTML, CSS and JavaScript.
