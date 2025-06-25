@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playing Card Catalog</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      height: 140px;
+      color: black;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .red {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .black {
+      background-color: #d1d1d1;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Playing Card Catalog</h1>
+  </header>
+  <div class="controls">
+    <label>
+      Filter by suit:
+      <select id="suitFilter">
+        <option value="all">All</option>
+        <option value="Hearts">Hearts</option>
+        <option value="Diamonds">Diamonds</option>
+        <option value="Clubs">Clubs</option>
+        <option value="Spades">Spades</option>
+      </select>
+    </label>
+    <label>
+      Sort by:
+      <select id="sortOption">
+        <option value="rank">Rank</option>
+        <option value="suit">Suit</option>
+      </select>
+    </label>
+    <button id="applyBtn">Apply</button>
+  </div>
+  <div class="cards" id="cardContainer"></div>
+
+  <script>
+    const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+
+    const cards = [];
+    suits.forEach(suit => {
+      ranks.forEach((rank, index) => {
+        const color = suit === "Hearts" || suit === "Diamonds" ? "red" : "black";
+        cards.push({ suit, rank, order: index, color });
+      });
+    });
+
+    function render(list) {
+      const container = document.getElementById("cardContainer");
+      container.innerHTML = "";
+      list.forEach(card => {
+        const div = document.createElement("div");
+        div.className = `card ${card.color}`;
+        div.textContent = `${card.rank} ${card.suit}`;
+        container.appendChild(div);
+      });
+    }
+
+    function applyFilters() {
+      const suit = document.getElementById("suitFilter").value;
+      const sort = document.getElementById("sortOption").value;
+      let list = cards.slice();
+      if (suit !== "all") {
+        list = list.filter(c => c.suit === suit);
+      }
+      if (sort === "rank") {
+        list.sort((a, b) => a.order - b.order);
+      } else if (sort === "suit") {
+        list.sort((a, b) => a.suit.localeCompare(b.suit) || a.order - b.order);
+      }
+      render(list);
+    }
+
+    document.getElementById("applyBtn").addEventListener("click", applyFilters);
+    window.addEventListener("DOMContentLoaded", applyFilters);
+  </script>
+</body>
+</html>
