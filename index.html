@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playing Card Catalog</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+    body {
+      font-family: 'Orbitron', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #1b2735 0%, #090a0f 100%);
+      color: #00e5ff;
+    }
+    header {
+      background: #111;
+      color: #00e5ff;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 0 10px #00e5ff;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+    }
+    .controls select,
+    .controls input,
+    .controls button {
+      background: #111;
+      color: #00e5ff;
+      border: 1px solid #00e5ff;
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+    }
+    .controls button {
+      cursor: pointer;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px solid currentColor;
+      height: 140px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 10px currentColor;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .red {
+      color: #ff0066;
+    }
+    .black {
+      color: #00e5ff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Playing Card Catalog</h1>
+  </header>
+  <div class="controls">
+    <label>
+      Filter by suit:
+      <select id="suitFilter">
+        <option value="all">All</option>
+        <option value="Hearts">Hearts</option>
+        <option value="Diamonds">Diamonds</option>
+        <option value="Clubs">Clubs</option>
+        <option value="Spades">Spades</option>
+      </select>
+    </label>
+    <label>
+      Sort by:
+      <select id="sortOption">
+        <option value="rank">Rank</option>
+        <option value="suit">Suit</option>
+      </select>
+    </label>
+    <label>
+      Search rank:
+      <input type="text" id="searchInput" placeholder="e.g. A or 10" />
+    </label>
+    <button id="shuffleBtn">Shuffle</button>
+  </div>
+  <div class="cards" id="cardContainer"></div>
+
+  <script>
+    const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+
+    const cards = [];
+    suits.forEach(suit => {
+      ranks.forEach((rank, index) => {
+        const color = suit === "Hearts" || suit === "Diamonds" ? "red" : "black";
+        cards.push({ suit, rank, order: index, color });
+      });
+    });
+
+    function render(list) {
+      const container = document.getElementById("cardContainer");
+      container.innerHTML = "";
+      list.forEach(card => {
+        const div = document.createElement("div");
+        div.className = `card ${card.color}`;
+        div.textContent = `${card.rank} ${card.suit}`;
+        container.appendChild(div);
+      });
+    }
+
+    function applyFilters() {
+      const suit = document.getElementById("suitFilter").value;
+      const sort = document.getElementById("sortOption").value;
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      let list = cards.slice();
+      if (suit !== "all") {
+        list = list.filter(c => c.suit === suit);
+      }
+      if (query) {
+        list = list.filter(c => c.rank.toLowerCase().includes(query));
+      }
+      if (sort === "rank") {
+        list.sort((a, b) => a.order - b.order);
+      } else if (sort === "suit") {
+        list.sort((a, b) => a.suit.localeCompare(b.suit) || a.order - b.order);
+      }
+      render(list);
+    }
+
+    function shuffle() {
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      applyFilters();
+    }
+
+    document.getElementById("suitFilter").addEventListener("change", applyFilters);
+    document.getElementById("sortOption").addEventListener("change", applyFilters);
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
+    document.getElementById("shuffleBtn").addEventListener("click", shuffle);
+    window.addEventListener("DOMContentLoaded", applyFilters);
+  </script>
+</body>
+</html>
